@@ -5,9 +5,11 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
-
+        android:minSdkVersion="16"
+        android:targetSdkVersion="22" />
+	
+    <uses-feature android:name="android.hardware.sensor.accelerometer"  android:required="true" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -22,6 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Pong"
+            android:label="@string/title_activity_pong"
+            android:parentActivityName=".Accueil" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fhlr.ponguorino.Accueil" />
+        </activity>
+        
     </application>
-
 </manifest>

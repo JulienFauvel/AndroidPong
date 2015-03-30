@@ -7,5 +7,7 @@
     <string name="jouer">Jouer</string>
     <string name="scores">Scores</string>
     <string name="quitter">Quitter</string>
-    
+    <string name="title_activity_pong">Pong</string>
+    <string name="hello_world">Hello world!</string>
+
 </resources>
