@@ -20,15 +20,17 @@ public class Accueil extends Activity {
 	}
 
 	public void jouer(View view) {
-		
+		Intent intent = new Intent(this, Pong.class);
+		startActivity(intent);
+		//TODO: Renvoyer le score 
 	}
 
 	public void afficherRegles(View view) {
-
+		//TODO: Règles
 	}
 
 	public void quitter(View view) {
-		Intent intent = new Intent();
+		Intent intent = new Intent(this, Accueil.class);
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.putExtra("EXIT", true);
 		startActivity(intent);
