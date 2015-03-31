@@ -25,8 +25,9 @@ public class Accueil extends Activity {
 		//TODO: Renvoyer le score 
 	}
 
-	public void afficherRegles(View view) {
-		//TODO: Règles
+	public void afficherScores(View view) {
+		Intent intent = new Intent(this, Scores.class);
+		startActivity(intent);
 	}
 
 	public void quitter(View view) {

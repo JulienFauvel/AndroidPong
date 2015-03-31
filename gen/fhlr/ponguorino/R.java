@@ -37,10 +37,12 @@ public final class R {
     public static final class layout {
         public static final int activity_accueil=0x7f030000;
         public static final int activity_pong=0x7f030001;
+        public static final int activity_scores=0x7f030002;
     }
     public static final class menu {
         public static final int accueil=0x7f070000;
         public static final int pong=0x7f070001;
+        public static final int scores=0x7f070002;
     }
     public static final class string {
         public static final int action_settings=0x7f050002;
@@ -51,6 +53,7 @@ public final class R {
         public static final int quitter=0x7f050005;
         public static final int scores=0x7f050004;
         public static final int title_activity_pong=0x7f050006;
+        public static final int title_activity_scores=0x7f050008;
     }
     public static final class style {
         /** 
