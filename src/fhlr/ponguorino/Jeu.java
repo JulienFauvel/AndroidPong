@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.Log;
 import android.view.View;
 
 public class Jeu extends View implements SensorEventListener {
@@ -50,28 +51,39 @@ public class Jeu extends View implements SensorEventListener {
 		p.setStrokeWidth(10);
 		p.setTextSize(20);
 		p.setColor(Color.WHITE);
+		
+		boucleJeu();
 	}
 	
-	@Override
-	protected void onDraw(Canvas canvas) {
+	public void init() {
 		
+		START_X = getWidth()/2;
+		START_Y_PLAYER = getHeight()-barreImg.getBitmap().getHeight();
+		START_Y_AI = barreImg.getBitmap().getHeight()/2;
+		
+		ai = new Barre(barreImg.getBitmap().getWidth(), barreImg.getBitmap().getHeight(), START_X, START_Y_AI);
+		joueur = new Barre(barreImg.getBitmap().getWidth(), barreImg.getBitmap().getHeight(), START_X, START_Y_PLAYER);
+		balle = new Balle(balleImg.getBitmap().getWidth(), balleImg.getBitmap().getHeight(), getWidth()/2, getHeight()/2);
+		
+		init = false;
+		
+		demarrerBalle();
+
+	}
+	
+	public void boucleJeu() {
 		if(init) {
-			START_X = getWidth()/2;
-			START_Y_PLAYER = getHeight()-barreImg.getBitmap().getHeight();
-			START_Y_AI = barreImg.getBitmap().getHeight()/2;
-			
-			ai = new Barre(barreImg.getBitmap().getWidth(), barreImg.getBitmap().getHeight(), START_X, START_Y_AI);
-			joueur = new Barre(barreImg.getBitmap().getWidth(), barreImg.getBitmap().getHeight(), START_X, START_Y_PLAYER);
-			balle = new Balle(balleImg.getBitmap().getWidth(), balleImg.getBitmap().getHeight(), getWidth()/2, getHeight()/2);
-			
-			demarrerBalle();
-			
-			init = false;
+			init();
 		}
+		
+		invalidate();
 		
 		//On bouge la barre
 		joueur.setX((int)(joueur.getX() - vx*3.0));
+		
 		balle.bouger();
+		
+		ai.setX(balle.getX());
 		
 		//On check la position des barres pour qu'elles ne sortent pas de l'écran
 		checkBarres();
@@ -82,6 +94,11 @@ public class Jeu extends View implements SensorEventListener {
 			reset();
 		}
 		
+	}
+	
+	@Override
+	protected void onDraw(Canvas canvas) {
+			
 		
 		//Arrière-plan en noir
 		canvas.drawARGB(255, 0, 0, 0);
@@ -94,11 +111,11 @@ public class Jeu extends View implements SensorEventListener {
 		//Affichage de l'accéléromètre
 		canvas.drawText(String.valueOf(vx), 10, 25, p);
 		
-		invalidate();
+		boucleJeu();
 	}
 	
 	public void demarrerBalle() {
-		int vx = 0;
+		int vx = -6;
 		int vy = -5; // Vers le joueur
 		
 		balle.setVx(vx);
@@ -106,6 +123,7 @@ public class Jeu extends View implements SensorEventListener {
 	}
 	
 	public void checkBalle() {
+		
 		//Si le joueur touche la balle
 		if(balle.getY() + balle.getHeight()/2 >= joueur.getY() - joueur.getHeight()/2
 			&& balle.getX() + balle.getWidth()/3 >= joueur.getX() - joueur.getWidth()/2 
@@ -124,7 +142,16 @@ public class Jeu extends View implements SensorEventListener {
 		}
 		
 		//TODO: Collision sur les murs
-		//TODO: Rebond en diagonale sur les barres
+		if(balle.getX() - balle.getWidth()/2 <= 0) {
+			balle.setVx(- balle.getVx());
+			balle.setX(balle.getWidth()/2+1);
+		} else if(balle.getX() + balle.getWidth()/2 >= getWidth() ) {
+			balle.setVx(- balle.getVx());
+			
+			Log.d("Collision", getWidth()+"" );
+			Log.d("Collision", balle.getX()+"" );
+		}
+		
 		//TODO: IA
 	}
 		
@@ -156,7 +183,6 @@ public class Jeu extends View implements SensorEventListener {
 		} else if(b.getX() >= getWidth()-b.getWidth()/2) {
 			b.setX(getWidth()-b.getWidth()/2);
 		}
-		
 	}
 	
 	public void reset() {
