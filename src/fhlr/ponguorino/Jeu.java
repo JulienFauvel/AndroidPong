@@ -3,6 +3,9 @@ package fhlr.ponguorino;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,19 +14,153 @@ import android.view.View;
 
 public class Jeu extends View implements SensorEventListener {
 
+	private BitmapDrawable balleImg;
+	private BitmapDrawable barreImg; 
+	
+	private int START_X = -1;
+	private int START_Y_PLAYER = -1;
+	private int START_Y_AI = -1;
+	
+	private boolean init;
+	
 	private SensorManager sensorManager;
 	private Sensor sensor;
+	
+	private Barre ai;
+	private Barre joueur;
+	private Balle balle;
+	
+	private Paint p;
+	
+	private float vx;
 
 	public Jeu(Context context) {
 		super(context);
-
+		
+		init = true;
+		
+		balleImg = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.ball);
+		barreImg = (BitmapDrawable) getContext().getResources().getDrawable(R.drawable.paddle);
+		
 		sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 		sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
+		
+		p = new Paint();
+		p.setStrokeWidth(10);
+		p.setTextSize(20);
+		p.setColor(Color.WHITE);
 	}
 	
-	protected void onDraw(Canvas c) {
+	@Override
+	protected void onDraw(Canvas canvas) {
 		
+		if(init) {
+			START_X = getWidth()/2;
+			START_Y_PLAYER = getHeight()-barreImg.getBitmap().getHeight();
+			START_Y_AI = barreImg.getBitmap().getHeight()/2;
+			
+			ai = new Barre(barreImg.getBitmap().getWidth(), barreImg.getBitmap().getHeight(), START_X, START_Y_AI);
+			joueur = new Barre(barreImg.getBitmap().getWidth(), barreImg.getBitmap().getHeight(), START_X, START_Y_PLAYER);
+			balle = new Balle(balleImg.getBitmap().getWidth(), balleImg.getBitmap().getHeight(), getWidth()/2, getHeight()/2);
+			
+			demarrerBalle();
+			
+			init = false;
+		}
+		
+		//On bouge la barre
+		joueur.setX((int)(joueur.getX() - vx*3.0));
+		balle.bouger();
+		
+		//On check la position des barres pour qu'elles ne sortent pas de l'écran
+		checkBarres();
+		checkBalle();
+		
+		
+		if(mancheFinie()>0) {
+			reset();
+		}
+		
+		
+		//Arrière-plan en noir
+		canvas.drawARGB(255, 0, 0, 0);
+		canvas.drawLine(0, getHeight()/2, getWidth(), getHeight()/2, p);
+		
+		canvas.drawBitmap(balleImg.getBitmap(), balle.getRX(), balle.getRY(), p);
+		canvas.drawBitmap(barreImg.getBitmap(), joueur.getRX(), joueur.getRY(), p);
+		canvas.drawBitmap(barreImg.getBitmap(), ai.getRX(), ai.getRY(), p);
+		
+		//Affichage de l'accéléromètre
+		canvas.drawText(String.valueOf(vx), 10, 25, p);
+		
+		invalidate();
+	}
+	
+	public void demarrerBalle() {
+		int vx = 0;
+		int vy = -5; // Vers le joueur
+		
+		balle.setVx(vx);
+		balle.setVy(vy);
+	}
+	
+	public void checkBalle() {
+		//Si le joueur touche la balle
+		if(balle.getY() + balle.getHeight()/2 >= joueur.getY() - joueur.getHeight()/2
+			&& balle.getX() + balle.getWidth()/3 >= joueur.getX() - joueur.getWidth()/2 
+			&& balle.getX() - balle.getWidth()/3 <= joueur.getX() + joueur.getWidth()/2){
+			
+			balle.setVy(- balle.getVy());
+			balle.accelerer();
+			
+		//Si l'ia touche la balle
+		} else if ((balle.getY() - balle.getHeight()/2 <= ai.getY() + ai.getHeight()/2
+			&& balle.getX() + balle.getWidth()/3 >= ai.getX() - ai.getWidth()/2 
+			&& balle.getX() - balle.getWidth()/3 <= ai.getX() + ai.getWidth()/2)) {
+			
+			balle.setVy(- balle.getVy());
+			balle.accelerer();
+		}
+		
+		//TODO: Collision sur les murs
+		//TODO: Rebond en diagonale sur les barres
+		//TODO: IA
+	}
+		
+	
+	/**
+	 * 
+	 * @return 0 si la balle n'est pas sortie
+	 * 		1 si le joueur a gagné la manche
+	 * 		2 si l'ia a gagné
+	 */
+	public int mancheFinie() {
+		if(balle.getY()-balle.getHeight()/4 <= 0) {
+			return 2;
+		} else if(balle.getY()+balle.getHeight()/4 >= getHeight()) {
+			return 1;
+		}
+		
+		return 0;
+	}
+	
+	public void checkBarres() {
+		checkBarre(joueur);
+		checkBarre(ai);
+	}
+	
+	public void checkBarre(Barre b) {
+		if(b.getX() <= b.getWidth()/2) {
+			b.setX(b.getWidth()/2);
+		} else if(b.getX() >= getWidth()-b.getWidth()/2) {
+			b.setX(getWidth()-b.getWidth()/2);
+		}
+		
+	}
+	
+	public void reset() {
+		init = true;
 	}
 	
 	public void resume() {
@@ -36,11 +173,10 @@ public class Jeu extends View implements SensorEventListener {
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-
+		float[] values = event.values;
+		vx = values[0];
 	}
 
 	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-	}
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {}
 }
