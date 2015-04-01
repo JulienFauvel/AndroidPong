@@ -33,10 +33,12 @@ public final class R {
     public static final class layout {
         public static final int activity_accueil=0x7f030000;
         public static final int activity_jeu=0x7f030001;
+        public static final int activity_pong=0x7f030002;
     }
     public static final class menu {
         public static final int accueil=0x7f070000;
         public static final int jeu=0x7f070001;
+        public static final int pong=0x7f070002;
     }
     public static final class string {
         public static final int action_settings=0x7f050002;
