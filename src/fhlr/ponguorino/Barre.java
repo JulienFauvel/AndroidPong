@@ -1,6 +1,9 @@
 package fhlr.ponguorino;
 
+
 public class Barre {
+	
+	private static final int MAX_SPEED = 12;
 	
 	private static final int WIDTH = 128;
 	private static final int HEIGHT = 32;
@@ -56,6 +59,16 @@ public class Barre {
 	
 	public void setY(int y) {
 		this.y = y;
+	}
+	
+	public void bougerVers(int x) {
+		int distance = Math.abs(this.x-x);
+		
+		if(this.x < x) {
+			this.x += distance > Barre.MAX_SPEED ? Barre.MAX_SPEED : distance;
+		} else if(this.x > x) {
+			this.x -= distance > Barre.MAX_SPEED ? Barre.MAX_SPEED : distance;
+		}
 	}
 	
 }

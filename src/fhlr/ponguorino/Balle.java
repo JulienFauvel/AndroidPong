@@ -78,10 +78,10 @@ public class Balle {
 	public void accelerer() {
 		
 		if(vx < 25) {
-			vx *= 1.2;	
+			vx *= 1.1;	
 		}
 		if(vy < 25) {
-			vy *= 1.3;
+			vy *= 1.1;
 		}
 	}
 	

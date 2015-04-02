@@ -10,6 +10,7 @@
     <string name="title_activity_jeu">Jeu</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_pong">Pong</string>
+    <string name="appuyer_jouer">"Toucher l'écran pour lancer"</string>
     <string name="title_activity_scores">Scores</string>
 
 </resources>
