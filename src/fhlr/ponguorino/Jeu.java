@@ -31,11 +31,13 @@ public class Jeu extends View implements SensorEventListener {
 	private Barre joueur;
 	private Balle balle;
 	
-	private int score;
+	private int[] score;
+	
 	
 	private Paint p;
 	
 	private float vx;
+	private int nbCoups;
 
 	public Jeu(Context context) {
 		super(context);
@@ -54,7 +56,8 @@ public class Jeu extends View implements SensorEventListener {
 		p.setTextSize(60);
 		p.setColor(Color.WHITE);
 		
-		score = -1;
+		score = new int[2];
+		nbCoups = -1;
 		
 		boucleJeu();
 	}
@@ -94,14 +97,18 @@ public class Jeu extends View implements SensorEventListener {
 			ai.bougerVers(balle.getX());
 		}
 		
-		Log.d("piong", vx*3.0+"");
-		
 		//On check la position des barres pour qu'elles ne sortent pas de l'écran
 		checkBarres();
 		checkBalle();
 		
-		
-		if(mancheFinie()>0) {
+		int m;
+		if((m=mancheFinie())>0) {
+			if(m == 1) {
+				score[0]++;
+			} else if(m == 2) {
+				score[1]++;
+			}
+			
 			reset();
 		}
 		
@@ -110,10 +117,8 @@ public class Jeu extends View implements SensorEventListener {
 	@Override
 	protected void onDraw(Canvas canvas) {
 			
-		
 		//Arrière-plan en noir
 		canvas.drawARGB(255, 0, 0, 0);
-		//canvas.drawLine(0, getHeight()/2, getWidth(), getHeight()/2, p);
 		
 		int nbTraits = 0;
 		for(int i=0; i<getWidth(); i+=getWidth()/21) {
@@ -128,7 +133,8 @@ public class Jeu extends View implements SensorEventListener {
 		canvas.drawBitmap(barreImg.getBitmap(), ai.getRX(), ai.getRY(), p);
 		
 		//Affichage de l'accéléromètre
-		canvas.drawText("Score : " + String.valueOf(score), 10, 61, p);
+		canvas.drawText("Score : " + score[0] + " - " + score[1], 10, 55, p);
+		canvas.drawText("Nombre de coup : " + nbCoups, 10, 100, p);
 		
 		boucleJeu();
 	}
@@ -154,15 +160,16 @@ public class Jeu extends View implements SensorEventListener {
 		if(balle.getY() + balle.getHeight()/2 >= joueur.getY() - joueur.getHeight()/2
 			&& balle.getX() + balle.getWidth()/3 >= joueur.getX() - joueur.getWidth()/2 
 			&& balle.getX() - balle.getWidth()/3 <= joueur.getX() + joueur.getWidth()/2){
-			Log.d("qskljdqlkd", "Score++");
-			score++;
+			
+			nbCoups++;
 			
 			float xBalle = balle.getX();
 			float xJoueur = joueur.getX();
 			
 			float newVx = (xJoueur - xBalle) * 0.10f;
 			
-			balle.setVx(newVx);			balle.setVy(- balle.getVy());
+			balle.setVx(newVx);
+			balle.setVy(- balle.getVy());
 			balle.accelerer();
 			
 		//Si l'ia touche la balle
@@ -234,6 +241,10 @@ public class Jeu extends View implements SensorEventListener {
 	
 	public void pause() {
 		sensorManager.unregisterListener(this, sensor);
+	}
+	
+	public int getScore() {
+		return score[0];
 	}
 
 	@Override

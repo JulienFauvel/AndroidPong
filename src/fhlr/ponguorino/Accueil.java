@@ -1,8 +1,15 @@
 package fhlr.ponguorino;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 
@@ -22,6 +29,20 @@ public class Accueil extends Activity {
 		
 		if( getIntent().getBooleanExtra("EXIT", false)){
 		    finish();
+		}
+		
+
+		String externalStorageState = Environment.getExternalStorageState();
+		if(Environment.MEDIA_MOUNTED.equals(externalStorageState)) {
+			try {
+				File f = new File(this.getExternalFilesDir("ponguorino"), "pong.data");
+				if(!f.exists()) {
+					f.createNewFile();
+					initFichier(f);
+				}
+			} catch (IOException e) {
+				//Toast.m
+			}
 		}
 	}
 	
@@ -73,6 +94,21 @@ public class Accueil extends Activity {
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		intent.putExtra("EXIT", true);
 		startActivity(intent);
+	}
+	
+	public void initFichier(File file) {
+		try {
+			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+			String str = "best:0\n";
+			str += "last:0\n";
+			str += "tenlast:0\n";
+			out.write(str.getBytes());
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
