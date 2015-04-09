@@ -25,11 +25,6 @@ public class Accueil extends Activity {
 		}
 
 		setContentView(R.layout.activity_accueil);
-		
-		if( getIntent().getBooleanExtra("EXIT", false)){
-		    finish();
-		}
-		
 
 		String externalStorageState = Environment.getExternalStorageState();
 		if(Environment.MEDIA_MOUNTED.equals(externalStorageState)) {
@@ -39,7 +34,7 @@ public class Accueil extends Activity {
 					f.createNewFile();
 				}
 			} catch (IOException e) {
-				Toast.makeText(this, "Impossible d'accéder à la mémoire externe", Toast.LENGTH_LONG).show();		
+				Toast.makeText(this, "Impossible d'accÃ©der Å• la mÃ©moire externe", Toast.LENGTH_LONG).show();		
 			}
 		}
 		
@@ -50,7 +45,7 @@ public class Accueil extends Activity {
 	/**
 	 * Lance le jeu
 	 * 
-	 * @param button Bouton originaire de l'événement
+	 * @param button Bouton originaire de l'Ã©vÃ©nement
 	 */
 	public void jouer(Button button) {
 		Intent intent = new Intent(this, Jeu.class);
@@ -60,7 +55,7 @@ public class Accueil extends Activity {
 	/**
 	 * Affiche les scores
 	 * 
-	 * @param button Bouton originaire de l'événement
+	 * @param button Bouton originaire de l'Ã©vÃ©nement
 	 */
 	public void scores(Button button) {
 		
@@ -69,7 +64,7 @@ public class Accueil extends Activity {
 	/**
 	 * Quitte l'application
 	 * 
-	 * @param button Bouton originaire de l'événement
+	 * @param button Bouton originaire de l'Ã©vÃ©nement
 	 */
 	public void quitter(Button button) {
 		Intent intent = new Intent(this, Accueil.class);
