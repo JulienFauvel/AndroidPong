@@ -1,7 +1,10 @@
 package fhlr.ponguorino;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -23,6 +26,21 @@ public class Pong extends Activity implements OnClickListener {
 		TextView text = (TextView) findViewById(R.id.appuyer_jouer);
 		text.setOnClickListener(this);
 		
+	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	    	Intent intent = new Intent();
+	    	String scores = jeu.getScore()[0] + " - " + jeu.getScore()[1];
+	    	intent.setData(Uri.parse(scores));
+	    	Util.ecrireFichier(this, String.valueOf(jeu.getMeilleurNbCoup()));
+	    	setResult(RESULT_OK, intent);			
+	    	finish();
+	    	
+	    	return true;
+	    }
+	    return super.onKeyDown(keyCode, event);
 	}
 
 	@Override

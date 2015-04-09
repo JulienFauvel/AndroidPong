@@ -14,11 +14,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="60dp"
+        android:paddingBottom="45dp"
         android:text="@string/pong"
         android:textColor="#FFFFFF"
         android:textSize="30sp" />
-
+    
+    <TextView
+        android:id="@+id/dernier_score"
+        android:paddingBottom="15dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dernier_score"
+        android:textColor="#FFFFFF" />
+ 
     <Button
         android:id="@+id/jouer"
         android:layout_width="match_parent"

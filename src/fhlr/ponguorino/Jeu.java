@@ -10,7 +10,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 import android.view.View;
 
 public class Jeu extends View implements SensorEventListener {
@@ -27,8 +26,11 @@ public class Jeu extends View implements SensorEventListener {
 	private SensorManager sensorManager;
 	private Sensor sensor;
 	
+	//Barres
 	private Barre ai;
 	private Barre joueur;
+	
+	//Balle
 	private Balle balle;
 	
 	private int[] score;
@@ -37,6 +39,8 @@ public class Jeu extends View implements SensorEventListener {
 	private Paint p;
 	
 	private float vx;
+	
+	private int nbCoupsMax;
 	private int nbCoups;
 
 	public Jeu(Context context) {
@@ -57,7 +61,9 @@ public class Jeu extends View implements SensorEventListener {
 		p.setColor(Color.WHITE);
 		
 		score = new int[2];
-		nbCoups = -1;
+		score[1] = -1;
+		nbCoupsMax = 0;
+		nbCoups = 0;
 		
 		boucleJeu();
 	}
@@ -109,6 +115,11 @@ public class Jeu extends View implements SensorEventListener {
 				score[1]++;
 			}
 			
+			if(nbCoups > nbCoupsMax) {
+				nbCoupsMax = nbCoups;
+			}
+			nbCoups = 0;
+			
 			reset();
 		}
 		
@@ -120,6 +131,7 @@ public class Jeu extends View implements SensorEventListener {
 		//Arrière-plan en noir
 		canvas.drawARGB(255, 0, 0, 0);
 		
+		//Barre en pointillés du milieu
 		int nbTraits = 0;
 		for(int i=0; i<getWidth(); i+=getWidth()/21) {
 			if(nbTraits%2==0) {
@@ -128,14 +140,16 @@ public class Jeu extends View implements SensorEventListener {
 			nbTraits++;
 		}
 		
+		//Dessin des deux barres et de la balle
 		canvas.drawBitmap(balleImg.getBitmap(), balle.getRX(), balle.getRY(), p);
 		canvas.drawBitmap(barreImg.getBitmap(), joueur.getRX(), joueur.getRY(), p);
 		canvas.drawBitmap(barreImg.getBitmap(), ai.getRX(), ai.getRY(), p);
 		
-		//Affichage de l'accéléromètre
+		//Affichage des scores et du nombre de coups
 		canvas.drawText("Score : " + score[0] + " - " + score[1], 10, 55, p);
-		canvas.drawText("Nombre de coup : " + nbCoups, 10, 100, p);
+		canvas.drawText("Nombre de coup : " + nbCoups, 10, 110, p);
 		
+		//Le jeu avance
 		boucleJeu();
 	}
 	
@@ -149,6 +163,7 @@ public class Jeu extends View implements SensorEventListener {
 	
 	public void checkBalle() {
 		
+		//Si la balle tappe le côté de la barre du joueur
 		if(balle.getX()+balle.getWidth()/2 >= joueur.getX()-joueur.getWidth()/2
 			&& balle.getY()-joueur.getHeight()/2 >= joueur.getY()-joueur.getHeight()/2
 			&& balle.getY()+joueur.getHeight()/2 <= joueur.getY()+joueur.getHeight()/2) {
@@ -198,7 +213,6 @@ public class Jeu extends View implements SensorEventListener {
 			}
 		}
 		
-		//TODO: IA
 	}
 		
 	
@@ -243,8 +257,12 @@ public class Jeu extends View implements SensorEventListener {
 		sensorManager.unregisterListener(this, sensor);
 	}
 	
-	public int getScore() {
-		return score[0];
+	public int[] getScore() {
+		return score;
+	}
+	
+	public int getMeilleurNbCoup() {
+		return nbCoupsMax;
 	}
 
 	@Override

@@ -1,9 +1,6 @@
 package fhlr.ponguorino;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
@@ -12,6 +9,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class Accueil extends Activity {
@@ -38,12 +37,14 @@ public class Accueil extends Activity {
 				File f = new File(this.getExternalFilesDir("ponguorino"), "pong.data");
 				if(!f.exists()) {
 					f.createNewFile();
-					initFichier(f);
 				}
 			} catch (IOException e) {
-				//Toast.m
+				Toast.makeText(this, "Impossible d'accéder à la mémoire externe", Toast.LENGTH_LONG).show();		
 			}
 		}
+		
+		TextView tv = (TextView) findViewById(R.id.dernier_score);
+		tv.setText(tv.getText()+"");
 	}
 	
 	/**
@@ -80,8 +81,18 @@ public class Accueil extends Activity {
 
 	public void jouer(View view) {
 		Intent intent = new Intent(this, Pong.class);
-		startActivity(intent);
-		//TODO: Renvoyer le score 
+		startActivityForResult(intent, 0);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		if(requestCode == 0 && resultCode == RESULT_OK) {
+			TextView tv = (TextView) findViewById(R.id.dernier_score); 
+			tv.setText("Dernier score : " + data.getData().toString());
+		}
+		
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	public void afficherScores(View view) {
@@ -96,19 +107,4 @@ public class Accueil extends Activity {
 		startActivity(intent);
 	}
 	
-	public void initFichier(File file) {
-		try {
-			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-			String str = "best:0\n";
-			str += "last:0\n";
-			str += "tenlast:0\n";
-			out.write(str.getBytes());
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 }
