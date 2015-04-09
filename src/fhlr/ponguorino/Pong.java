@@ -30,7 +30,7 @@ public class Pong extends Activity implements OnClickListener {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK && jeu != null)) {
 	    	Intent intent = new Intent();
 	    	String scores = jeu.getScore()[0] + " - " + jeu.getScore()[1];
 	    	intent.setData(Uri.parse(scores));
